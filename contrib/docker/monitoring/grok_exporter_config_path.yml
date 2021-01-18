@@ -1,0 +1,42 @@
+global:
+  config_version: 3
+input:
+  type: file
+  path: /log/*.log
+  readall: true
+  poll_interval: 5s # should not  be needed
+imports:
+- type: grok_patterns
+  dir: /grok/default/patterns
+metrics:
+- type: counter
+  name: apache_http_response_codes_total
+  help: HTTP requests to Apache
+  match: '%{COMBINEDAPACHELOG}'
+  labels:
+    code: '{{.response}}'
+    method: '{{.verb}}'
+    path: '{{.request}}'
+- type: counter
+  name: apache_http_request_client_total
+  help: HTTP requests to Apache by client IP
+  match: '%{COMBINEDAPACHELOG}'
+  labels:
+    code: '{{.response}}'
+    method: '{{.verb}}'
+    ip: '{{.clientip}}'
+    path: '{{.request}}'
+- type: summary
+  name: apache_http_response_bytes
+  help: Size of HTTP responses
+  match: '%{COMMONAPACHELOG}'
+  value: '{{.bytes}}'
+- type: gauge
+  name: apache_http_last_request_seconds
+  help: Timestamp of the last HTTP request
+  match: '%{COMMONAPACHELOG}'
+  value: '{{timestamp "02/Jan/2006:15:04:05 -0700" .timestamp}}'
+server:
+  protocol: http
+  port: 9144
+
