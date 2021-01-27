@@ -2,9 +2,9 @@ global:
   config_version: 3
 input:
   type: file
-  path: /log/*.log
+  path: /log/*
   readall: true
-  poll_interval: 5s # should not  be needed
+  poll_interval: 60s # should not  be needed
 imports:
 - type: grok_patterns
   dir: /grok/default/patterns
@@ -12,7 +12,7 @@ metrics:
 - type: counter
   name: apache_http_response_codes_total
   help: HTTP requests to Apache
-  match: '%{COMBINEDAPACHELOG}'
+  match: '%{COMMONAPACHELOG}'
   labels:
     code: '{{.response}}'
     method: '{{.verb}}'
@@ -20,7 +20,7 @@ metrics:
 - type: counter
   name: apache_http_request_client_total
   help: HTTP requests to Apache by client IP
-  match: '%{COMBINEDAPACHELOG}'
+  match: '%{COMMONAPACHELOG}'
   labels:
     code: '{{.response}}'
     method: '{{.verb}}'
