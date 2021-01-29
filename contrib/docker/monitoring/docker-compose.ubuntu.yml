@@ -67,7 +67,9 @@ services:
     ports:
       - 9144:9144
     volumes:
-      - /var/log/httpd:/log
+      - /var/log/apache2/other_vhosts_access.log:/log/default.log
+      - /var/log/apache2/access.log:/log/access.log
+      - /var/log/apache2/error.log:/log/error.log
       - ./grok_exporter_config_path.yml:/grok/config.yml
     #restart: unless-stopped
 
